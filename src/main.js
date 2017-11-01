@@ -4,6 +4,16 @@ const jwt = require('jsonwebtoken')
 const app = express()
 const invalidTokens = new Set()
 
+// Enable CORS
+app.use(function(req, res, next) {
+  res.header('Access-Control-Allow-Origin', '*')
+  res.header(
+    'Access-Control-Allow-Headers',
+    'Origin, X-Requested-With, Content-Type, Accept'
+  )
+  next()
+})
+
 // Get temporary login token for given user
 app.post('/loginlink', (req, res) => {
   const token = jwt.sign({ email: req.query.email }, 'supersecret', {
