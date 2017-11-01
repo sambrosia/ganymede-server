@@ -9,6 +9,9 @@
 # production
 /build
 
+# database
+/rethinkdb_data
+
 # misc
 .DS_Store
 .env.local
