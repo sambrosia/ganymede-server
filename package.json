@@ -1,6 +1,6 @@
 {
   "scripts": {
-    "start": "node src/main.js"
+    "start": "rethinkdb & node src/main.js"
   },
   "dependencies": {
     "axios": "^0.17.0",

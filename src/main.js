@@ -95,4 +95,4 @@ app.get('/podcast', async (req, res) => {
   }
 })
 
-app.listen(4000, () => console.log('listening on port 4000'))
+app.listen(4000, () => console.log('\nAPI listening on port 4000\n'))
