@@ -8,7 +8,7 @@ plugins:
 env:
   node: true
 rules:
-  no-console: 1
+  no-console: off
   prettier/prettier:
     - error
     -
