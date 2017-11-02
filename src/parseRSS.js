@@ -3,15 +3,15 @@
 
 const xml2js = require('xml-js').xml2js
 
-function parseFeedItem(item) {
+function parseRSSItem(item) {
   return {
     title: item.title._text,
     date: item.pubDate._text,
-    url: item.enclosure._attributes.url
+    url: item.enclosure ? item.enclosure._attributes.url : null
   }
 }
 
-function parseFeed(xmlFeed) {
+function parseRSS(xmlFeed) {
   const feed = xml2js(xmlFeed, { compact: true }).rss.channel
 
   return {
@@ -20,8 +20,8 @@ function parseFeed(xmlFeed) {
     image: feed.image
       ? feed.image.url._text
       : feed['itunes:image']._attributes.href,
-    items: feed.item.map(parseFeedItem)
+    items: feed.item.map(parseRSSItem)
   }
 }
 
-module.exports = parseFeed
+module.exports = parseRSS
