@@ -1,5 +1,7 @@
 const express = require('express')
 const jwt = require('jsonwebtoken')
+const axios = require('axios')
+const parseRSS = require('./parseRSS.js')
 
 const app = express()
 const invalidTokens = new Set()
@@ -39,18 +41,30 @@ app.post('/login', (req, res) => {
   invalidTokens.add(req.query.jwt)
 
   try {
-    // Verify the token and respond with a new longer-lived one
-    // for actual auth within the app
+    // Verify the login token's signature
     const payload = jwt.verify(req.query.jwt, 'supersecret')
+    // Create new token for actual authentication
     const token = jwt.sign({ email: payload.email }, 'supersecret', {
       expiresIn: '7d'
     })
+    // Send new token to client
     res.json(token)
 
     console.log(`\n${req.ip} logged in as ${payload.email}`)
     console.log(`token: ${token}`)
   } catch (error) {
     res.status(403).json(error)
+  }
+})
+
+// Parse podcast info from given url and respond w/ nice json
+app.get('/podcast', async (req, res) => {
+  try {
+    const url = decodeURIComponent(req.query.url)
+    const feed = parseRSS((await axios(url)).data)
+    res.json(feed)
+  } catch (error) {
+    console.log(error)
   }
 })
 
