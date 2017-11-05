@@ -26,32 +26,32 @@ app.use(function(req, res, next) {
 })
 
 // Get temporary login token for given user
-app.post('/loginlink', (req, res) => {
-  const token = jwt.sign({ id: req.query.email }, 'supersecret', {
+app.post('/login/:email', (req, res) => {
+  const token = jwt.sign({ id: req.params.email }, 'supersecret', {
     expiresIn: '5m'
   })
 
   // TODO: Send login link w/ this temp token to email
   res.send('Check your email for your login link.')
 
-  console.log(`\n${req.ip} requested login for ${req.query.email}`)
+  console.log(`\n${req.ip} requested login for ${req.params.email}`)
   console.log(`token: ${token}`)
 })
 
 // Get longer-term token from temp token
-app.post('/login', async (req, res) => {
+app.post('/auth/:jwt', async (req, res) => {
   // Make sure the provided token is not blacklisted
-  if (invalidTokens.has(req.query.jwt)) {
+  if (invalidTokens.has(req.params.jwt)) {
     res.status(403).send('jwt is invalid')
     return
   }
 
   // Blacklist the token to prevent further logins using it
-  invalidTokens.add(req.query.jwt)
+  invalidTokens.add(req.params.jwt)
 
   try {
     // Verify the login token's signature
-    const payload = jwt.verify(req.query.jwt, 'supersecret')
+    const payload = jwt.verify(req.params.jwt, 'supersecret')
 
     // Fetch or create the user document
     let user = await rethink
@@ -84,10 +84,10 @@ app.post('/login', async (req, res) => {
   }
 })
 
-// Parse podcast info from given url and respond w/ nice json
-app.get('/podcast', async (req, res) => {
+// Parse podcast info from given rss url and respond w/ nice json
+app.get('/podcast/:url', async (req, res) => {
   try {
-    const url = decodeURIComponent(req.query.url)
+    const url = decodeURIComponent(req.params.url)
     const feed = parseRSS((await axios(url)).data)
     res.json(feed)
   } catch (error) {
