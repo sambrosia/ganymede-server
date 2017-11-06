@@ -35,7 +35,7 @@ app.post('/login/:email', (req, res) => {
   res.json('Check your email for your login link')
 
   console.log(`\n${req.ip} requested login for ${req.params.email}`)
-  console.log(`token: ${token}`)
+  console.log(`login url: ${req.get('origin')}/auth/${token}`)
 })
 
 // Get longer-term token from temp token
@@ -80,7 +80,6 @@ app.post('/auth/:jwt', async (req, res) => {
     res.json(token)
 
     console.log(`\n${req.ip} logged in as ${user.id}`)
-    console.log(`token: ${token}`)
   } catch (error) {
     res.status(500).json(error)
     console.log(error)
