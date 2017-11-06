@@ -32,7 +32,7 @@ app.post('/login/:email', (req, res) => {
   })
 
   // TODO: Send login link w/ this temp token to email
-  res.send('Check your email for your login link.')
+  res.json('Check your email for your login link')
 
   console.log(`\n${req.ip} requested login for ${req.params.email}`)
   console.log(`token: ${token}`)
@@ -42,7 +42,10 @@ app.post('/login/:email', (req, res) => {
 app.post('/auth/:jwt', async (req, res) => {
   // Make sure the provided token is not blacklisted
   if (invalidTokens.has(req.params.jwt)) {
-    res.status(403).send('jwt is invalid')
+    res.status(403).json({
+      name: 'JsonWebTokenError',
+      message: 'jwt invalidated'
+    })
     return
   }
 
@@ -79,7 +82,7 @@ app.post('/auth/:jwt', async (req, res) => {
     console.log(`\n${req.ip} logged in as ${user.id}`)
     console.log(`token: ${token}`)
   } catch (error) {
-    res.status(403).json(error)
+    res.status(500).json(error)
     console.log(error)
   }
 })
