@@ -3,6 +3,7 @@ const jwt = require('jsonwebtoken')
 const rethink = require('rethinkdb')
 const axios = require('axios')
 const parseRSS = require('./parseRSS.js')
+const CORS = require('./CORS.js')
 
 const app = express()
 const invalidTokens = new Set()
@@ -15,15 +16,8 @@ rethink
   })
   .catch(error => console.log(error))
 
-// Enable CORS
-app.use(function(req, res, next) {
-  res.header('Access-Control-Allow-Origin', '*')
-  res.header(
-    'Access-Control-Allow-Headers',
-    'Origin, X-Requested-With, Content-Type, Accept'
-  )
-  next()
-})
+// Enable CORS middleware
+app.use(CORS)
 
 // Get temporary login token for given user
 app.post('/login/:email', (req, res) => {
